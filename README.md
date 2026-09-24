@@ -24,16 +24,17 @@ Note: Next 16 renamed `middleware.ts` to `proxy.ts`. The passphrase gate lives i
 ```bash
 npm install
 cp .env.local.example .env.local   # then fill in the two values
-node scripts/seed.mjs              # creates the tables and loads all cards
 npm run dev
 ```
+
+Point `DATABASE_URL` at your existing Neon database. Only when starting a brand-new database do you need `node scripts/seed.mjs`, which creates the tables and loads the cards from the local `data/` folder.
 
 | Variable         | What it is                                       |
 | ---------------- | ------------------------------------------------ |
 | `DATABASE_URL`   | Neon connection string (the pooled one)          |
 | `APP_PASSPHRASE` | The passphrase the login page asks for           |
 
-`seed.mjs` is a first-time load and is insert-only: cards that already exist are never overwritten, so edits you make in the app survive. The database is the source of truth after seeding. Don't re-run it after deleting seeded cards, or they come back.
+`seed.mjs` is insert-only: cards that already exist are never overwritten, so edits you make in the app survive. The database is the source of truth after seeding. Don't re-run it after deleting seeded cards, or they come back.
 
 ## Data model
 
@@ -56,25 +57,36 @@ values ('os', 'os:paging-vs-segmentation', 'Paging vs segmentation',
         '{Memory Management}');
 ```
 
-## Where the data came from
+## Where the data lives
 
-| Path | Purpose |
-| ---- | ------- |
-| `data/dsa_dataset.json` | Source rows: your notes, category, revised flag, links |
+The database (Neon) is the source of truth. The repo contains code only: your notes, the copied problem statements and the reference solutions are **not** committed. The `data/` folder is gitignored and exists only on the machine that built the database.
+
+| Path (local only, gitignored) | Purpose |
+| ----------------------------- | ------- |
+| `data/dsa_dataset.json` | Original rows: your notes, category, revised flag, links |
 | `data/solutions/*.txt` | Python reference solutions, one `### <row>` block per problem |
+| `data/leetcode_cache.json` | LeetCode difficulty, tags and statements fetched by `enrich.mjs` |
 | `data/seed.json` | Generated seed (dataset + LeetCode data + solutions) |
-| `scripts/enrich.mjs` | Fetches difficulty, tags and statements from LeetCode's GraphQL API into a local cache (gitignored) |
-| `scripts/build-seed.mjs` | Merges everything into `seed.json` and syntax-checks every solution with Python |
-| `scripts/seed.mjs` | Applies the schema and upserts `seed.json` into Postgres |
 
-Regenerating from scratch: `node scripts/enrich.mjs && node scripts/build-seed.mjs && node scripts/seed.mjs`.
+| Script | Purpose |
+| ------ | ------- |
+| `scripts/enrich.mjs` | Fetches difficulty, tags and statements from LeetCode's GraphQL API into the cache |
+| `scripts/build-seed.mjs` | Merges everything into `seed.json` and syntax-checks every solution with Python |
+| `scripts/seed.mjs` | Applies the schema and inserts `seed.json` into Postgres (first-time load only) |
+
+These scripts need the local `data/` folder, so they won't work from a fresh clone. That's intended: a fresh clone connects to the existing database through `DATABASE_URL` and needs no seeding. Back up your notes with Neon's own tools, or dump the `cards` table.
+
+Notes on the seeded data:
+
+- The 7 company OA problems have no public statement, so their `core_question` is shown as the prompt.
+- The signatures of the OA solutions are guesses at the original input format.
+- Categories: green = done and revised, yellow = needs practice, red = not done or very hard, gold = good problem that taught something, unclassified = solved but not yet reviewed.
 
 ## Deploying to Vercel
 
-1. Push to a **private** GitHub repo (it contains personal notes and copied problem statements).
+1. Push the repo to GitHub (it contains code only, no personal notes).
 2. Import it in Vercel. Framework preset: Next.js.
-3. Add `DATABASE_URL` and `APP_PASSPHRASE` as environment variables.
-4. Run `node scripts/seed.mjs` once locally against the same database.
+3. Add `DATABASE_URL` and `APP_PASSPHRASE` as environment variables. The data is already in Neon, so nothing else is needed.
 
 ## Layout
 

@@ -40,7 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local data caches (regenerable)
-/data/leetcode_cache.json
+# personal data: notes, LeetCode statements, seed files. Lives in Neon; local copy only.
+/data/
 !.env.local.example
 .claude/
