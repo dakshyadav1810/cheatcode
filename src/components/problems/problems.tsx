@@ -170,8 +170,14 @@ export function Problems({ rows: initial, initialFilters }: { rows: ListRow[]; i
         />
         <span className="whitespace-nowrap text-sm text-muted-foreground">{shown.length} shown</span>
         <Link
+          href={`/new?kind=${filters.kind}`}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "ml-auto")}
+        >
+          + Add
+        </Link>
+        <Link
           href={`/drill?${filtersToQuery(filters)}`}
-          className={cn(buttonVariants({ size: "sm" }), "ml-auto")}
+          className={buttonVariants({ size: "sm" })}
           aria-disabled={shown.length === 0}
         >
           Drill these

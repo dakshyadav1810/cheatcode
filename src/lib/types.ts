@@ -39,3 +39,20 @@ export type ListRow = {
   last_outcome: Outcome | null;
   days_since: number | null;
 };
+
+// Everything the add/edit form submits.
+export type CardInput = {
+  kind: Kind;
+  title: string;
+  prompt: string;
+  answer: string;
+  tags: string[];
+  difficulty: string;
+  category: Category;
+  revised: boolean;
+  link: string;
+  core_question: string;
+  solution_idea: string;
+  learnings: string;
+  code: string;
+};

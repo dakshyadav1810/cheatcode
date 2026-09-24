@@ -1,11 +1,12 @@
 # CheatCode
 
-A personal drill app for interview prep. It started as a 143-problem DSA tracker (a color-coded spreadsheet) and turns it into a closed loop: see the problem, attempt it, reveal your own notes plus a Python reference solution, log how it went.
+A personal drill app for interview prep. It started as a DSA tracker (a color-coded spreadsheet) and turns it into a closed loop: see the problem, attempt it, reveal your own notes plus a Python reference solution, log how it went.
 
 DSA is the first deck. The data model is generic, so OS and OOP flashcard decks slot in without schema changes.
 
 ## Features
 
+- **Add / edit / delete:** `+ Add` on the list opens a form for a new DSA problem (statement, topics, your notes, Python code) or an OS/OOP flashcard. `edit` on any card changes it or deletes it (attempt history goes with it).
 - **Problem list (home):** every problem in one table, with category, revised flag, difficulty, topics, attempts and last-drilled. Filter by category, difficulty, topic, unrevised-only or title. Sort by any column. Tick "revised" inline.
 - **Drill:** shows only the statement and tags. Reveal (`Space`) shows your notes and the Python reference. Log the attempt as Solved / Needed hint / Failed (`1` / `2` / `3`), and re-tag the category on the spot. `→` or `n` skips.
 - **Analytics:** per-topic attempts, fail and hint rate, unrevised share and days since last drilled, ranked by how much each topic needs drilling. Topic names link to the filtered list.
@@ -32,7 +33,7 @@ npm run dev
 | `DATABASE_URL`   | Neon connection string (the pooled one)          |
 | `APP_PASSPHRASE` | The passphrase the login page asks for           |
 
-`seed.mjs` is safe to re-run: it refreshes content (title, statement, tags, notes, code) but never touches `category` or `revised`, so your progress survives.
+`seed.mjs` is a first-time load and is insert-only: cards that already exist are never overwritten, so edits you make in the app survive. The database is the source of truth after seeding. Don't re-run it after deleting seeded cards, or they come back.
 
 ## Data model
 
@@ -45,7 +46,7 @@ Defined in [db/schema.sql](db/schema.sql).
 
 ### Adding flashcards
 
-Insert rows into `cards`. Nothing else needs to change; the deck tabs appear as soon as a second `kind` exists.
+Use `+ Add` in the app, or insert rows into `cards` directly (handy when asking Claude to generate a batch). Nothing else needs to change; the deck tabs appear as soon as a second `kind` exists.
 
 ```sql
 insert into cards (kind, key, title, prompt, answer, tags)
@@ -68,12 +69,6 @@ values ('os', 'os:paging-vs-segmentation', 'Paging vs segmentation',
 
 Regenerating from scratch: `node scripts/enrich.mjs && node scripts/build-seed.mjs && node scripts/seed.mjs`.
 
-Notes on the data:
-
-- The 7 company OA problems have no public statement, so their `core_question` is shown as the prompt.
-- The signatures of the OA solutions are guesses at the original input format.
-- Categories: green = done and revised, yellow = needs practice, red = not done or very hard, gold = good problem that taught something, unclassified = solved but not yet reviewed.
-
 ## Deploying to Vercel
 
 1. Push to a **private** GitHub repo (it contains personal notes and copied problem statements).
@@ -84,7 +79,7 @@ Notes on the data:
 ## Layout
 
 ```
-src/app/            pages: / (list), /drill, /analytics, /login
+src/app/            pages: / (list), /drill, /analytics, /new, /edit/[id], /login
 src/components/     problems table, drill UI, shadcn primitives
 src/lib/            db client, server actions, filter parsing, types
 src/proxy.ts        passphrase gate

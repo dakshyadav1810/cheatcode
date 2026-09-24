@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <main className="flex flex-1 items-center justify-center p-4">
       <form action={login} className="flex w-full max-w-xs flex-col gap-3">
-        <h1 className="text-lg font-medium">CheatCode</h1>
+        <h1 className="text-lg font-bold">CheatCode</h1>
         <input
           name="passphrase"
           type="password"

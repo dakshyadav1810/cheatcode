@@ -181,6 +181,9 @@ export function Drill({
                 <div className="flex flex-wrap items-center gap-2">
                   <CategoryDot category={card.category} />
                   <h1 className="text-lg font-semibold">{card.title}</h1>
+                  <Link href={`/edit/${card.id}`} className="text-xs text-muted-foreground underline">
+                    edit
+                  </Link>
                   {card.meta.link && (
                     <a href={card.meta.link} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground underline">
                       open ↗

@@ -13,7 +13,7 @@ export function Nav({ active }: { active: Tab }) {
   );
   return (
     <header className="flex h-12 shrink-0 items-center gap-6 border-b px-4 text-sm">
-      <Link href="/" className="text-base font-medium">CheatCode</Link>
+      <Link href="/" className="text-base font-bold">CheatCode</Link>
       {item("/", "Problems", "problems")}
       {item("/drill?unrevised=1", "Drill", "drill")}
       {item("/analytics", "Analytics", "analytics")}
