@@ -76,12 +76,6 @@ The database (Neon) is the source of truth. The repo contains code only: your no
 
 These scripts need the local `data/` folder, so they won't work from a fresh clone. That's intended: a fresh clone connects to the existing database through `DATABASE_URL` and needs no seeding. Back up your notes with Neon's own tools, or dump the `cards` table.
 
-Notes on the seeded data:
-
-- The 7 company OA problems have no public statement, so their `core_question` is shown as the prompt.
-- The signatures of the OA solutions are guesses at the original input format.
-- Categories: green = done and revised, yellow = needs practice, red = not done or very hard, gold = good problem that taught something, unclassified = solved but not yet reviewed.
-
 ## Deploying to Vercel
 
 1. Push the repo to GitHub (it contains code only, no personal notes).
