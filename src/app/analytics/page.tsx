@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { sql } from "@/lib/db";
+import { KINDS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,10 @@ type Row = {
   days_since: number | null;
 };
 
-const KINDS = ["dsa", "os", "oop"];
 
 export default async function Analytics({ searchParams }: PageProps<"/analytics">) {
   const q = (await searchParams).kind;
-  const kind = KINDS.includes(q as string) ? (q as string) : "dsa";
+  const kind = (KINDS as readonly string[]).includes(q as string) ? (q as string) : "dsa";
 
   const rows = (await sql`
     with t as (select id, unnest(tags) as topic, revised from cards where kind = ${kind})

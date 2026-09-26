@@ -1,8 +1,9 @@
--- One generic card table so OS / OOP flashcards slot in later (kind = 'dsa' | 'os' | 'oop').
+-- One generic card table; kind is the deck ('dsa', 'os', 'oop', 'sql50', ...). The allowed decks live in
+-- src/lib/types.ts, not in the database, so adding a deck needs no migration.
 -- DSA extras (link, notes, reference code, ...) live in meta jsonb; flashcards use prompt/answer only.
 create table if not exists cards (
   id         serial primary key,
-  kind       text not null check (kind in ('dsa','os','oop')),
+  kind       text not null,
   key        text not null unique,           -- stable id, e.g. 'dsa:row-2'
   title      text not null,
   prompt     text not null default '',       -- statement (html) or flashcard question
@@ -24,3 +25,6 @@ create table if not exists attempts (
   at      timestamptz not null default now()
 );
 create index if not exists attempts_card_idx on attempts (card_id);
+
+-- Older databases had a hardcoded deck list here; drop it.
+alter table cards drop constraint if exists cards_kind_check;

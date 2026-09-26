@@ -10,6 +10,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const rows = (await sql`
     select c.id, c.kind, c.title, c.tags, c.difficulty, c.category, c.revised,
            c.meta->>'leetcode_id'                                as lc,
+           c.meta->>'source'                                     as source,
            count(a.id)::int                                      as attempts,
            count(a.id) filter (where a.outcome = 'solved')::int  as solved,
            (array_agg(a.outcome order by a.at desc))[1]          as last_outcome,

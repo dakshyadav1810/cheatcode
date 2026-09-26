@@ -1,7 +1,18 @@
 export const CATEGORIES = ["green", "yellow", "red", "gold", "unclassified"] as const;
 export type Category = (typeof CATEGORIES)[number];
 export type Outcome = "solved" | "hint" | "failed";
-export type Kind = "dsa" | "os" | "oop";
+// Adding a deck = add it here. "Problem" decks have a statement, notes and reference code;
+// the others are plain question/answer flashcards.
+export const KINDS = ["dsa", "os", "oop", "sql50"] as const;
+export type Kind = (typeof KINDS)[number];
+export const KIND_LABEL: Record<Kind, string> = {
+  dsa: "DSA problem",
+  os: "OS flashcard",
+  oop: "OOP flashcard",
+  sql50: "SQL50 problem",
+};
+export const isProblem = (k: Kind) => k === "dsa" || k === "sql50";
+export const CODE_LANG: Partial<Record<Kind, string>> = { dsa: "Python", sql50: "SQL" };
 
 export type Card = {
   id: number;
@@ -34,6 +45,7 @@ export type ListRow = {
   category: Category;
   revised: boolean;
   lc: string | null;
+  source: string | null;
   attempts: number;
   solved: number;
   last_outcome: Outcome | null;

@@ -1,5 +1,5 @@
 "use client";
-import { CATEGORIES, type Category, type Kind } from "@/lib/types";
+import { CATEGORIES, isProblem, type Category, type Kind } from "@/lib/types";
 import type { Filters } from "@/lib/filters";
 import { CategoryDot } from "@/components/category-dot";
 import { cn } from "@/lib/utils";
@@ -44,7 +44,7 @@ export function FilterPanel({
           ))}
         </select>
       </label>
-      {filters.kind === "dsa" && (
+      {isProblem(filters.kind) && (
         <label className="flex flex-col gap-1.5">
           <span className="text-xs text-muted-foreground">Difficulty</span>
           <select className={selectCls} value={filters.difficulty} onChange={(e) => set({ difficulty: e.target.value })}>

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cards:import": "node scripts/cards.mjs import",
+    "cards:export": "node scripts/cards.mjs export"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -1,4 +1,4 @@
-import { CATEGORIES, type Category, type Kind } from "./types";
+import { CATEGORIES, KINDS, type Category, type Kind } from "./types";
 
 export type Filters = {
   kind: Kind;
@@ -18,7 +18,6 @@ export const DEFAULT_FILTERS: Filters = {
   q: "",
 };
 
-const KINDS: Kind[] = ["dsa", "os", "oop"];
 type SearchParams = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 

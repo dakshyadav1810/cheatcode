@@ -1,9 +1,8 @@
 "use server";
 import { sql } from "./db";
-import { CATEGORIES, type CardInput, type Category, type Outcome } from "./types";
+import { CATEGORIES, KINDS, isProblem, type CardInput, type Category, type Outcome } from "./types";
 
 const OUTCOMES: Outcome[] = ["solved", "hint", "failed"];
-const KINDS = ["dsa", "os", "oop"];
 // Fields that live in cards.meta; empty values are removed rather than stored.
 const META_FIELDS = ["link", "core_question", "solution_idea", "learnings", "code"] as const;
 
@@ -27,7 +26,7 @@ function validate(input: CardInput) {
   if (!title) throw new Error("Title is required");
   if (!KINDS.includes(input.kind)) throw new Error("Bad deck");
   if (!CATEGORIES.includes(input.category)) throw new Error("Bad category");
-  const isDsa = input.kind === "dsa";
+  const isDsa = isProblem(input.kind); // problem decks: statement, notes, code
   if (isDsa && !input.prompt.trim()) throw new Error("Statement is required");
   if (!isDsa && (!input.prompt.trim() || !input.answer.trim())) throw new Error("Question and answer are required");
   const tags = [...new Set(input.tags.map((t) => t.trim()).filter(Boolean))].slice(0, 20);

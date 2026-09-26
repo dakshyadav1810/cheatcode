@@ -205,7 +205,7 @@ export function Problems({ rows: initial, initialFilters }: { rows: ListRow[]; i
                 onClick={() => router.push(`/drill?${filtersToQuery(filters, { card: String(r.id) })}`)}
                 className="cursor-pointer border-b border-border/50 last:border-0 hover:bg-accent/50"
               >
-                <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{r.lc ?? "OA"}</td>
+                <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{r.lc ?? (r.source === "company_oa" ? "OA" : "—")}</td>
                 <td className="px-3 py-2 font-medium">
                   <Link
                     href={`/drill?${filtersToQuery(filters, { card: String(r.id) })}`}

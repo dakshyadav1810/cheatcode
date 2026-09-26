@@ -57,6 +57,52 @@ values ('os', 'os:paging-vs-segmentation', 'Paging vs segmentation',
         '{Memory Management}');
 ```
 
+## Decks
+
+A deck is a card's `kind`. Current decks: `dsa`, `os`, `oop`, `sql50`. To add a new one, add a line in [src/lib/types.ts](src/lib/types.ts) (name, label, whether it is a problem deck or a flashcard deck, code language) and mirror the name in `scripts/cards.mjs`. The database needs no change. Its tab appears on the problem list as soon as the deck has a card.
+
+## Bulk add cards
+
+Write a JSON array of cards to a file (anywhere; `data/import/` is a good spot since `data/` is gitignored), then:
+
+```bash
+npm run cards:import -- data/import/os-memory.json --dry   # validate only, writes nothing
+npm run cards:import -- data/import/os-memory.json        # insert into Neon + save a local copy
+npm run cards:export                                       # full snapshot of cards + attempts
+```
+
+The import checks every card first and inserts nothing if any is invalid. Cards whose deck and title already exist are skipped, so re-running a file is safe. After inserting, the input file and a full snapshot are saved in `data/backups/` (gitignored, local only).
+
+```json
+[
+  { "kind": "os", "title": "Paging vs segmentation",
+    "prompt": "What is the difference between paging and segmentation?",
+    "answer": "Paging: fixed-size blocks, no external fragmentation. Segmentation: variable-size logical units.",
+    "tags": ["Memory Management"] },
+
+  { "kind": "dsa", "title": "Two Sum", "difficulty": "Easy",
+    "prompt": "Given nums and target, return the indices of the two numbers that add up to target.",
+    "tags": ["Array", "Hash Table"], "category": "unclassified",
+    "link": "https://leetcode.com/problems/two-sum/",
+    "core_question": "", "solution_idea": "", "learnings": "",
+    "code": "class Solution:\n    def twoSum(self, nums, target):\n        ..." }
+]
+```
+
+| Field | Notes |
+| ----- | ----- |
+| `kind` | `dsa` (default), `os`, `oop` or `sql50` |
+| `title`, `prompt` | Required. `prompt` is the statement (DSA) or the question (flashcard) |
+| `answer` | Required for `os` / `oop`; ignored for problem decks (`dsa`, `sql50`) |
+| `tags` | Array, or a comma-separated string |
+| `difficulty` | `Easy` / `Medium` / `Hard`, DSA only |
+| `category` | `green` / `yellow` / `red` / `gold` / `unclassified` (default) |
+| `revised` | `true` / `false` (default) |
+| `link`, `core_question`, `solution_idea`, `learnings`, `code`, `leetcode_id` | Problem decks only (`dsa`, `sql50`), all optional. `code` is Python for `dsa`, SQL for `sql50` |
+| `source` | Set to `"leetcode"` if `prompt` is HTML copied from LeetCode; otherwise it's shown as plain text |
+
+With Claude Code, just ask, e.g. "write 30 OS flashcards on virtual memory to `data/import/vm.json`, dry-run it, then import". It reads `DATABASE_URL` from your `.env`.
+
 ## Where the data lives
 
 The database (Neon) is the source of truth. The repo contains code only: your notes, the copied problem statements and the reference solutions are **not** committed. The `data/` folder is gitignored and exists only on the machine that built the database.

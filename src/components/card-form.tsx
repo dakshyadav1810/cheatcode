@@ -4,13 +4,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createCard, deleteCard, saveCard } from "@/lib/actions";
-import { CATEGORIES, type Card, type CardInput, type Category, type Kind } from "@/lib/types";
+import { CATEGORIES, CODE_LANG, KINDS, KIND_LABEL, isProblem, type Card, type CardInput, type Category, type Kind } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const field =
   "w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring";
-
-const KIND_LABEL: Record<Kind, string> = { dsa: "DSA problem", os: "OS flashcard", oop: "OOP flashcard" };
 
 function toInput(kind: Kind, card?: Card): CardInput {
   return {
@@ -45,7 +43,7 @@ export function CardForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const set = (patch: Partial<CardInput>) => setF((p) => ({ ...p, ...patch }));
-  const isDsa = f.kind === "dsa";
+  const isDsa = isProblem(f.kind); // problem decks: statement, notes, code
   const htmlStatement = card?.meta.source === "leetcode"; // fetched statements are stored as HTML
 
   const tags = tagText.split(",").map((t) => t.trim()).filter(Boolean);
@@ -94,7 +92,7 @@ export function CardForm({
 
       {!card && (
         <div className="flex gap-1">
-          {(["dsa", "os", "oop"] as Kind[]).map((k) => (
+          {KINDS.map((k) => (
             <button
               type="button"
               key={k}
@@ -195,7 +193,7 @@ export function CardForm({
             <textarea className={cn(field, "min-h-20 py-2")} value={f.learnings} onChange={(e) => set({ learnings: e.target.value })} />
           </label>
           <label>
-            {label("Reference code (Python)", "optional")}
+            {label(`Reference code (${CODE_LANG[f.kind] ?? "code"})`, "optional")}
             <textarea
               className={cn(field, "min-h-56 py-2 font-mono text-[0.8125rem] leading-relaxed")}
               value={f.code}

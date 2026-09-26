@@ -8,7 +8,7 @@ import Link from "next/link";
 import { FilterPanel } from "./filters";
 import { filtersToQuery, type Filters } from "@/lib/filters";
 import { recordAttempt, updateCard } from "@/lib/actions";
-import { CATEGORIES, type Card, type Category, type Kind, type Outcome } from "@/lib/types";
+import { CATEGORIES, CODE_LANG, type Card, type Category, type Kind, type Outcome } from "@/lib/types";
 
 function shuffle<T>(arr: T[], seed: number) {
   const a = [...arr];
@@ -200,7 +200,7 @@ export function Drill({
               </div>
 
               {card.prompt ? (
-                card.kind === "dsa" && card.meta.source === "leetcode" ? (
+                card.meta.source === "leetcode" ? (
                   <div className="statement" dangerouslySetInnerHTML={{ __html: card.prompt }} />
                 ) : (
                   <p className="whitespace-pre-wrap leading-relaxed">{card.prompt}</p>
@@ -223,7 +223,7 @@ export function Drill({
                   {card.meta.learnings && <Section title="Learnings" text={card.meta.learnings} />}
                   {card.meta.code && (
                     <div className="flex flex-col gap-1.5">
-                      <h2 className="text-xs uppercase tracking-wide text-muted-foreground">Reference (Python)</h2>
+                      <h2 className="text-xs uppercase tracking-wide text-muted-foreground">Reference ({CODE_LANG[card.kind] ?? "code"})</h2>
                       <pre className="overflow-x-auto rounded-md border bg-card p-3 font-mono text-[0.8125rem] leading-relaxed">
                         {card.meta.code}
                       </pre>
